@@ -1,19 +1,29 @@
 {{#each this}}
-<div class="photo-card">
-  <img src={{webformatURL}} alt={{tags}} loading="lazy" />
-  <div class="info">
-    <p class="info-item">
-      <b>Likes</b>{{likes}}
-    </p>
-    <p class="info-item">
-      <b>Views</b>{{views}}
-    </p>
-    <p class="info-item">
-      <b>Comments</b>{{comments}}
-    </p>
-    <p class="info-item">
-      <b>Downloads</b>{{downloads}}
-    </p>
+<div class="card">
+  <div class="overlay">
+    <img class="card-image" src={{webformatURL}} alt="{{tags}}" loading="lazy" />
   </div>
+  <ul class="card-info">
+    <li class="card-info__item">
+      <img class="card-info__value" width="20px" height="20px"
+        src="https://img.icons8.com/ios-filled/50/null/filled-like.png" />
+      <p>{{likes}}</p>
+    </li>
+    <li class="card-info__item">
+      <img class="card-info__value" width="20px" height="20px"
+        src="https://img.icons8.com/external-tanah-basah-glyph-tanah-basah/48/null/external-view-content-creator-tanah-basah-glyph-tanah-basah-2.png" />
+      <p>{{views}}</p>
+    </li>
+    <li class="card-info__item">
+      <img class="card-info__value" width="20px" height="20px"
+        src="https://img.icons8.com/ios-glyphs/30/null/speech-bubble--v1.png" />
+      <p>{{comments}}</p>
+    </li>
+    <li class="card-info__item">
+      <img class="card-info__value" width="20px" height="20px"
+        src="https://img.icons8.com/external-anggara-glyph-anggara-putra/32/null/external-download-social-media-interface-anggara-glyph-anggara-putra.png" />
+      <p>{{downloads}}</p>
+    </li>
+  </ul>
 </div>
 {{/each}}

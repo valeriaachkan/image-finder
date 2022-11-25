@@ -6,17 +6,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <form class="search-form" id="search-form">
-        <input type="text" name="searchQuery" autocomplete="off" placeholder="Search images..." />
-        <button type="submit">Search</button>
-    </form>
-    <div class="gallery">
-        <!-- Картки зображень -->
+    <div class="container">
+        <form class="search-form" id="search-form">
+            <input class="search-form__input" type="text" name="searchQuery" autocomplete="off"
+                placeholder="Search images..." />
+            <button class="search-form__button" type="submit">Search</button>
+        </form>
+        <div class="gallery visually-hidden">
+            <!-- Картки зображень -->
+        </div>
+        <button type="button" class="load-more visually-hidden">Load more</button>
     </div>
-    <button type="button" class="load-more visually-hidden">Load more</button>
+    <div class="lightbox">
+        <div class="lightbox__content">
+            <img class="lightbox__image" alt="" />
+        </div>
+    </div>
 </body>
 
 </html>

@@ -7,7 +7,7 @@ const searchParams = new URLSearchParams({
 	image_type: 'photo',
 	orientation: 'horizontal',
 	safesearch: true,
-    per_page: 10,
+    per_page: 33,
 });
 
 export default class ImagesApiService {

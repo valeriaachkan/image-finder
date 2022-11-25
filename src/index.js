@@ -3,6 +3,7 @@ import ImagesApiService from "./api-service";
 import cardsTpl from './template/gallery-cards.hbs';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
+
 const imagesApiService = new ImagesApiService();
 const refs = {
 	searchForm: document.querySelector('form#search-form'),
@@ -12,6 +13,7 @@ const refs = {
 
 refs.searchForm.addEventListener('submit', onSearch);
 refs.loadBtn.addEventListener('click', onLoadMore);
+refs.gallery.addEventListener('click', onImageClick)
 
 function onSearch(e) {
     e.preventDefault();
@@ -54,6 +56,7 @@ function onFetchError() {
 }
 
 function appendCardsMarkup(data) {
+    refs.gallery.classList.remove('visually-hidden');
 	refs.gallery.insertAdjacentHTML('beforeend', cardsTpl(data));
     showLoadBtn();
 }
@@ -89,4 +92,10 @@ async function onLoadMore() {
     } catch (error) {
         console.log(error.message);
     }
+}
+
+
+function onImageClick(e) {
+    const targetEl = e.target;
+    console.log(targetEl);
 }
