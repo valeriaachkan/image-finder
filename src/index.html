@@ -22,9 +22,20 @@
         <button type="button" class="load-more visually-hidden">Load more</button>
     </div>
     <div class="lightbox">
-        <div class="lightbox__content">
-            <img class="lightbox__image" alt="" />
-        </div>
+        <div class="lightbox__overlay"></div>
+
+      <div class="lightbox__content">
+        <img class="lightbox__image"  alt=""/>
+      </div>
+
+      <button
+        type="button"
+        class="lightbox__button"
+        data-action="close-lightbox"
+      >
+      <img src="./images/icon-close.svg" alt="">
+    </button>
+    </div>
     </div>
 </body>
 

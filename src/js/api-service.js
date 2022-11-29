@@ -14,14 +14,18 @@ export default class ImagesApiService {
 	constructor() {
 		this.searchQuery = '';
         this.page = 1;
+        this.lastPage = 1;
 	}
 
 	async fetchImages() {
 		const url = `${BASE_URL}?q=${this.searchQuery}&${searchParams}&page=${this.page}`;
         const response = await axios.get(url);
+        const data = response.data;
+        this.lastPage = Math.ceil(data.totalHits / searchParams.get('per_page'));
+
         this.incrementPage();
         
-		return response.data;
+		return data;
 	}
 
     incrementPage() {

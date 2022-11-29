@@ -1,7 +1,7 @@
 {{#each this}}
 <div class="card">
   <div class="overlay">
-    <img class="card-image" src={{webformatURL}} alt="{{tags}}" loading="lazy" />
+    <img class="card-image" id="{{id}}" srcset="{{webformatURL}} 640w, {{largeImageURL}} 1280w" sizes="400px" src={{webformatURL}} alt="{{tags}}" loading="lazy" />
   </div>
   <ul class="card-info">
     <li class="card-info__item">
