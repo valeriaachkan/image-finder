@@ -1,5 +1,4 @@
 import cardsTpl from '../template/gallery-cards.hbs';
-import { showLoadBtn } from './loadMore-button';
 import getRefs from "./get-refs";
 
 const refs = getRefs();
