@@ -7,7 +7,6 @@ const refs = getRefs();
 function appendCardsMarkup(data) {
     showGallery();
 	refs.gallery.insertAdjacentHTML('beforeend', cardsTpl(data));
-    showLoadBtn();
 }
 
 function clearGallery() {

@@ -1,37 +1,14 @@
-// import { hideLoadBtn } from './loadMore-button';
-// import ImagesApiService from './api-service';
-import { clearGallery } from './renderGallery';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { clearGallery } from './render-gallery';
 
-// const imagesApiService = new ImagesApiService();
-
-// function onSearch(e) {
-//     e.preventDefault();
-    
-//     const searchQuery = queryTrasform(e.currentTarget.elements.searchQuery.value);
-
-//     imagesApiService.query = searchQuery;
-//     hideLoadBtn();
-//     clearGallery();
-//     imagesApiService.resetPage();
-//     onFetchImages();
-// }
-
-// async function onFetchImages() {
-// 	try {
-// 		const res = await imagesApiService.fetchImages();
-// 		const images = res.hits;
-// 		console.log(res);
-
-//         if (images.length === 0) {
-//             return  onFetchError();
-//           } 
-
-//         appendCardsMarkup(images);
-//         Notify.success(`Hooray! We found ${res.totalHits} images.`);
-// 	} catch (error) {
-// 		console.log(error.message);
-// 	}
-// }
+Notify.init({
+	width: '380px',
+	distance: '20px',
+	borderRadius: '12px',
+	timeout: 1500,
+	showOnlyTheLastOne: true,
+	fontSize: '18px',
+});
 
 function onFetchError() {
     clearGallery();

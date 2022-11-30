@@ -1,11 +1,13 @@
 import './sass/style.scss';
 import getRefs from './js/get-refs';
-import ImagesApiService from "./js/api-service";
+import ImagesApiService from './js/api-service';
 import ModalService from './js/modal-service';
-import { showLoadBtn, hideLoadBtn } from './js/loadMore-button';
-import { appendCardsMarkup, clearGallery, showGallery, hideGallery } from './js/renderGallery';
+import { hideLoadBtn, showLoadBtn, smoothScroll } from './js/loadMore-button';
+import { appendCardsMarkup, clearGallery } from './js/render-gallery';
+import { findImgById, findNextImg, findPrevImg, onSwipeLeft, onSwipeRight, lightboxClassRemove, resetLightboxImg, bodyClassAdd, bodyClassRemove } from './js/on-lightbox-actions'
 import { onFetchError, queryTrasform } from './js/search-and-fetch';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 
 Notify.init({
 	width: '380px',
@@ -16,69 +18,81 @@ Notify.init({
 	fontSize: '18px',
 });
 
-
 const imagesApiService = new ImagesApiService();
 const refs = getRefs();
-// console.log(refs.closeBtn);
 
 refs.searchForm.addEventListener('submit', onSearch);
 refs.loadBtn.addEventListener('click', onLoadMore);
 refs.gallery.addEventListener('click', onImageClick);
 document.addEventListener('keydown', imageSwipe);
-// refs.closeBtn.addEventListener('click', onBtnCloseModalClick);
-// refs.lightbox.addEventListener('click', onLightboxClickCloseModal);
-// document.addEventListener('keydown', onEscapeKeydown);
+refs.closeBtn.addEventListener('click', onBtnCloseModalClick);
+refs.lightbox.addEventListener('click', onLightboxClickCloseModal);
+document.addEventListener('keydown', onEscapeKeydown);
 
 function onSearch(e) {
-    e.preventDefault();
-    
-    const searchQuery = queryTrasform(e.currentTarget.elements.searchQuery.value);
+	e.preventDefault();
+	const searchQuery = queryTrasform(e.currentTarget.elements.searchQuery.value);
 
-    imagesApiService.query = searchQuery;
-    hideLoadBtn();
-    clearGallery();
-    imagesApiService.resetPage();
-    onFetchImages();
+	imagesApiService.query = searchQuery;
+	hideLoadBtn();
+	clearGallery();
+	imagesApiService.resetPage();
+	onFetchImages();
 }
 
 async function onFetchImages() {
 	try {
 		const res = await imagesApiService.fetchImages();
 		const images = res.hits;
-		console.log(res);
+		// console.log(res);
 
-        if (images.length === 0) {
-            return  onFetchError();
-          } 
+		if (images.length === 0) {
+			return onFetchError();
+		}
 
-        appendCardsMarkup(images);
-        Notify.success(`Hooray! We found ${res.totalHits} images.`);
+		if (imagesApiService.page - 1 === imagesApiService.lastPage) {
+			appendCardsMarkup(images);
+			Notify.success(`Hooray! We found ${res.totalHits} images.`);
+			return;
+		}
+
+		appendCardsMarkup(images);
+        showLoadBtn();
+		Notify.success(`Hooray! We found ${res.totalHits} images.`);
 	} catch (error) {
 		console.log(error.message);
 	}
 }
 
 async function onLoadMore() {
-    try {
+	try {
 		const res = await imagesApiService.fetchImages();
-        const images = res.hits;
+		const images = res.hits;
 
-        if((imagesApiService.page - 1) === imagesApiService.lastPage) {
-            appendCardsMarkup(images);
-            hideLoadBtn();
-            Notify.info("We're sorry, but you've reached the end of search results.");
-            return;
-        }
-        appendCardsMarkup(images);
-    } catch (error) {
-        console.log(error.message);
-    }
+		if (imagesApiService.page - 1 === imagesApiService.lastPage) {
+			appendCardsMarkup(images);
+            smoothScroll();
+			hideLoadBtn();
+			Notify.info("We're sorry, but you've reached the end of search results.");
+			return;
+		}
+		appendCardsMarkup(images);
+        smoothScroll();
+	} catch (error) {
+		console.log(error.message);
+	}
 }
 
 function onImageClick(e) {
-    const currentImg = e.target;
-    const modal = new ModalService({currentImg});
-    modal.openModal();
+    if(!e.target.classList.contains('card')) {
+        return;
+    }
+
+	const targetCardImg = e.target;
+    const targetImg = targetCardImg.querySelector('img.card-image');
+	const modal = new ModalService({ targetImg });
+	modal.openModal();
+    bodyClassAdd();
 }
 
 function imageSwipe(e) {
@@ -86,77 +100,54 @@ function imageSwipe(e) {
 		return;
 	}
 
-    const keyPressedCode = e.code;
-    const currentImg = findImgById();
-    let prevImg = '';
-    let nextImg = '';
-    prevImg = findPrevImg(currentImg);
-    nextImg = findNextImg(currentImg);
-    
-    const modal = new ModalService({currentImg, nextImg, prevImg});
+	const keyPressedCode = e.code;
+	const targetImg = findImgById();
+	let prevImg = '';
+	let nextImg = '';
+	prevImg = findPrevImg(targetImg);
+	nextImg = findNextImg(targetImg);
+
+	const modal = new ModalService({ targetImg, nextImg, prevImg });
 
 	if (keyPressedCode === 'ArrowLeft') {
-        if(prevImg === '') {
-            return;
-        }
-        onSwipeLeft(modal);
+		if (prevImg === ''|| prevImg === undefined) {
+			return;
+		}
+		onSwipeLeft(modal);
 	}
 
 	if (keyPressedCode === 'ArrowRight') {
-        if(nextImg === '') {
-            return;
-        }
-        onSwipeRight(modal);
+		if (nextImg === ''|| nextImg === undefined) {
+			return;
+		}
+		onSwipeRight(modal);
 	}
 }
 
-function onSwipeRight(modal) {
-    try {
-        modal.swipeRight();
-    } catch(error) {
-        console.log(error.message);
-    }
+function onBtnCloseModalClick() {
+	lightboxClassRemove();
+    bodyClassRemove();
+	resetLightboxImg();
 }
 
-function onSwipeLeft(modal) {
-    try {
-        modal.swipeLeft();
-    } catch(error) {
-        console.log(error.message);
-    }
+function onLightboxClickCloseModal(e) {
+	const targetEl = e.target;
+
+	if (!targetEl.classList.contains('lightbox__overlay')) {
+		return;
+	}
+
+	lightboxClassRemove();
+    bodyClassRemove();
+	resetLightboxImg();
 }
 
-function findImgById() {
-    const modalImgId = refs.lightboxImage.id;
-    const currentImg = document.getElementById(`${modalImgId}`);
+function onEscapeKeydown(e) {
+	if (e.code !== 'Escape') {
+		return;
+	}
 
-    return currentImg;
+	lightboxClassRemove();
+    bodyClassRemove();
+	resetLightboxImg();
 }
-
-function findPrevImg(currentImg) {
-    try {
-        const prevParent = currentImg.parentNode.parentNode.previousElementSibling;
-        const prevImg = prevParent.querySelector('img.card-image');
-        return prevImg;
-    } catch (error) {
-        console.log(error.message);
-        return;  
-    }
-}
-
-function findNextImg(currentImg) {
-    try {
-        const nextParent = currentImg.parentNode.parentNode.nextElementSibling;
-        const nextImg = nextParent.querySelector('img.card-image');
-        return nextImg;
-    } catch (error) {
-        console.log(error.message);
-        return;
-    }
-}
-
-// function onBtnCloseModalClick() {
-//     const modal = new ModalService();
-//     ModalService.closeModal();
-
-// }
