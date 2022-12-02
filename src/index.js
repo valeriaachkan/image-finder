@@ -2,7 +2,6 @@ import './sass/style.scss';
 import getRefs from './js/get-refs';
 import ImagesApiService from './js/api-service';
 import ModalService from './js/modal-service';
-import { hideLoadBtn, showLoadBtn, smoothScroll } from './js/loadMore-button';
 import { appendCardsMarkup, clearGallery } from './js/render-gallery';
 import { findImgById, findNextImg, findPrevImg, onSwipeLeft, onSwipeRight, lightboxClassRemove, resetLightboxImg, bodyClassAdd, bodyClassRemove } from './js/on-lightbox-actions'
 import { onFetchError, queryTrasform } from './js/search-and-fetch';
@@ -22,7 +21,7 @@ const imagesApiService = new ImagesApiService();
 const refs = getRefs();
 
 refs.searchForm.addEventListener('submit', onSearch);
-refs.loadBtn.addEventListener('click', onLoadMore);
+// refs.loadBtn.addEventListener('click', onLoadMore);
 refs.gallery.addEventListener('click', onImageClick);
 document.addEventListener('keydown', imageSwipe);
 refs.closeBtn.addEventListener('click', onBtnCloseModalClick);
@@ -34,50 +33,25 @@ function onSearch(e) {
 	const searchQuery = queryTrasform(e.currentTarget.elements.searchQuery.value);
 
 	imagesApiService.query = searchQuery;
-	hideLoadBtn();
 	clearGallery();
 	imagesApiService.resetPage();
-	onFetchImages();
+	fetchImages();
 }
 
-async function onFetchImages() {
+async function fetchImages() {
 	try {
 		const res = await imagesApiService.fetchImages();
 		const images = res.hits;
-		// console.log(res);
 
 		if (images.length === 0) {
 			return onFetchError();
 		}
 
-		if (imagesApiService.page - 1 === imagesApiService.lastPage) {
-			appendCardsMarkup(images);
+		if (imagesApiService.page - 1 === 1) {
 			Notify.success(`Hooray! We found ${res.totalHits} images.`);
-			return;
 		}
 
 		appendCardsMarkup(images);
-        showLoadBtn();
-		Notify.success(`Hooray! We found ${res.totalHits} images.`);
-	} catch (error) {
-		console.log(error.message);
-	}
-}
-
-async function onLoadMore() {
-	try {
-		const res = await imagesApiService.fetchImages();
-		const images = res.hits;
-
-		if (imagesApiService.page - 1 === imagesApiService.lastPage) {
-			appendCardsMarkup(images);
-            smoothScroll();
-			hideLoadBtn();
-			Notify.info("We're sorry, but you've reached the end of search results.");
-			return;
-		}
-		appendCardsMarkup(images);
-        smoothScroll();
 	} catch (error) {
 		console.log(error.message);
 	}
@@ -151,3 +125,17 @@ function onEscapeKeydown(e) {
     bodyClassRemove();
 	resetLightboxImg();
 }
+
+const options = {
+	rootMargin: '400px',
+};
+const callback = (entries) => {
+	entries.forEach((entry) => {
+		if (entry.isIntersecting && imagesApiService.query) {
+			fetchImages();
+		}
+	});
+};
+const observer = new IntersectionObserver(callback, options);
+
+observer.observe(refs.sentinel);

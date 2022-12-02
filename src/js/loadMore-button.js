@@ -1,23 +1,42 @@
-import getRefs from "./get-refs";
+// import getRefs from "./get-refs";
 
-const refs = getRefs();
+// const refs = getRefs();
 
-function showLoadBtn() {
-    refs.loadBtn.classList.remove('visually-hidden');
-}
-function hideLoadBtn() {
-    refs.loadBtn.classList.add('visually-hidden');
-}
+// async function onLoadMore() {
+// 	try {
+// 		const res = await imagesApiService.fetchImages();
+// 		const images = res.hits;
 
-function smoothScroll() {
-	const { height: cardHeight } = document
-		.querySelector('.gallery')
-		.firstElementChild.getBoundingClientRect();
+// 		if (imagesApiService.page - 1 === imagesApiService.lastPage) {
+// 			appendCardsMarkup(images);
+//             smoothScroll();
+// 			hideLoadBtn();
+// 			Notify.info("We're sorry, but you've reached the end of search results.");
+// 			return;
+// 		}
+// 		appendCardsMarkup(images);
+//         smoothScroll();
+// 	} catch (error) {
+// 		console.log(error.message);
+// 	}
+// }
 
-	window.scrollBy({
-		top: cardHeight * 2,
-		behavior: 'smooth',
-	});
-}
+// function showLoadBtn() {
+//     refs.loadBtn.classList.remove('visually-hidden');
+// }
+// function hideLoadBtn() {
+//     refs.loadBtn.classList.add('visually-hidden');
+// }
 
-export { showLoadBtn, hideLoadBtn, smoothScroll };
+// function smoothScroll() {
+// 	const { height: cardHeight } = document
+// 		.querySelector('.gallery')
+// 		.firstElementChild.getBoundingClientRect();
+
+// 	window.scrollBy({
+// 		top: cardHeight * 2,
+// 		behavior: 'smooth',
+// 	});
+// }
+
+// export { showLoadBtn, hideLoadBtn, smoothScroll };

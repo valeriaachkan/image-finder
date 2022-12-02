@@ -7,5 +7,6 @@ export default function getRefs() {
         lightboxImage: document.querySelector('img.lightbox__image'),
 		closeBtn: document.querySelector('[data-action="close-lightbox"]'),
 		body: document.querySelector('body'),
+		sentinel: document.querySelector('#sentinel'),
 	};
 }
